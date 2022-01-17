@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "to_do_app",
+    "name": "Task It",
     "slug": "to_do_app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -23,7 +23,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.masiga.to_do_app"
     },
     "web": {
       "favicon": "./assets/favicon.png"

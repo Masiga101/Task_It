@@ -1,20 +1,13 @@
-import React, { useState, useEffect, useRef} from 'react';
-import {
-  Text,
-  View,
-  StyleSheet,
-  ScrollView,
-  SafeAreaView
-} from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import Constants from 'expo-constants';
+
+import { Text, View, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 import { Card } from 'react-native-paper';
 
-
 import Task from './components/Task';
 import Form from './components/Form';
-
-
 
 export default function App() {
   const [userTasks, setUserTasks] = useState([
@@ -24,46 +17,39 @@ export default function App() {
     'Pretty straight forward',
   ]);
 
- const firstUpdate = useRef(true)
+  const firstUpdate = useRef(true);
 
   const storeData = async () => {
-    AsyncStorage.setItem('@tasks', JSON.stringify(userTasks)).
-    then(e => console.log(userTasks))
-    .catch(e => console.log(`Could not update data ${e.message}`))
+    AsyncStorage.setItem('@tasks', JSON.stringify(userTasks))
+      .then((e) => console.log(userTasks))
+      .catch((e) => console.log(`Could not update data ${e.message}`));
   };
 
+  useEffect(() => {
+    getData();
+  }, []);
 
-  
+  const getData = async () => {
+    AsyncStorage.getItem('@tasks')
+      .then((val) => {
+        if (val != null) {
 
-  useEffect(( ) => {
-    getData()
-  }, [])
+          return setUserTasks(JSON.parse(val));
+        }
+      })
+      .catch((err) => console.log(`Could not get data ${err.message}`));
+  };
 
-
-
-const getData = async () => {
-  AsyncStorage.getItem('@tasks')
-  .then(val => {
-    if(val != null){
-      console.log(val)
-      return   setUserTasks(JSON.parse(val))
+  useEffect(() => {
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+      return;
     }
-  })
-  .catch(err =>  console.log(`Could not get data ${err.message}`))
-}
-
-useEffect(() => {
-  if (firstUpdate.current) {
-    firstUpdate.current = false;
-    return;
-  }
-storeData()
-}, [userTasks])
-
+    storeData();
+  }, [userTasks]);
 
   const addTask = async (newTask) => {
-   setUserTasks((prev) => [...prev, newTask]);
-   
+    setUserTasks((prev) => [...prev, newTask]);
   };
 
   const deleteTask = (indx) => {
@@ -80,13 +66,12 @@ storeData()
           ))}
         </View>
       </ScrollView>
-<View>
-
-      <Card style={styles.card}>
-        <Form addTask={(e) => addTask(e)} />
-      </Card>
-</View>
-<StatusBar backgroundCollor="blue" />
+      <View>
+        <Card style={styles.card}>
+          <Form addTask={(e) => addTask(e)} />
+        </Card>
+      </View>
+      <StatusBar />
     </SafeAreaView>
   );
 }
@@ -97,25 +82,25 @@ const styles = StyleSheet.create({
     backgroundColor: '#ebedf5',
     paddingLeft: 8,
     paddingRight: 6,
-    paddingTop: '2rem',
-    paddingBottom: '1.5rem'
+    paddingTop: Constants.statusBarHeight + 10,
+    paddingBottom: 24,
   },
+
   tasksContainer: {
     padding: 6,
-  }
-  ,
+    height: '80%',
+    paddingBottom: 10
+  },
+
   title: {
     fontSize: 25,
     textAlign: 'center',
     fontWeight: 'bold',
     borderBottomWidth: 2,
-    marginBottom: 12
-  
   },
   card: {
     marginTop: 10,
     width: '100%',
+    paddingBottom: 10,
   },
-
-
 });
